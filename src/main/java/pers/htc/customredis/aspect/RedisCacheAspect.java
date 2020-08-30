@@ -37,14 +37,15 @@ public class RedisCacheAspect {
     }
 
     @Around("pointcut()")
-    public Object around(ProceedingJoinPoint pjp) {
+    public Object around(ProceedingJoinPoint pjp) throws Throwable {
         //处理返回类型
         MethodSignature methodSignature = (MethodSignature) pjp.getSignature();
         ClassTypeHandler classTypeHandler = new ClassTypeHandler(methodSignature.getMethod());
         Class<?> clz = classTypeHandler.getOuterClass();
         if (clz == void.class) {
             log.error("返回值为void,缓存注解失效");
-            throw new RuntimeException("返回值为void,缓存注解失效");
+            return pjp.proceed();
+//            throw new RuntimeException("返回值为void,缓存注解失效");
         }
 
         CustomRedisModel customRedisModel = customRedisParser.parse(pjp);

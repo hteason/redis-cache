@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import pers.htc.customredis.model.User;
-import pers.htc.customredis.service.AuthService;
+import pers.htc.customredis.service.impl.AuthService;
 
 import java.util.List;
 
@@ -35,5 +35,11 @@ public class AuthController {
         List<User> list = authService.getList(me);
         System.out.println("list done:" + list);
         return list;
+    }
+
+    @GetMapping("/voidTest")
+    public void doSth(String me) {
+        System.out.println("void test");
+        authService.doSth();
     }
 }

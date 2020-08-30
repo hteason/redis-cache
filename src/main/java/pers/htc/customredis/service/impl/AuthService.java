@@ -1,15 +1,16 @@
-package pers.htc.customredis.service;
+package pers.htc.customredis.service.impl;
 
 import org.springframework.stereotype.Service;
 import pers.htc.customredis.annotation.CustomRedis;
 import pers.htc.customredis.model.User;
+import pers.htc.customredis.service.IAuthService;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 @Service
-public class AuthService {
+public class AuthService implements IAuthService {
 
     private final String PREFIX = "0test:menu:";
 
@@ -28,7 +29,7 @@ public class AuthService {
 
     @CustomRedis(key = "0test:{#me}",
             expireTme = 1, expireTimeUnit = TimeUnit.HOURS,
-            extendTime = 1,extendTimeUnit = TimeUnit.HOURS)
+            extendTime = 1, extendTimeUnit = TimeUnit.HOURS)
     public List<User> getList(String me) {
         System.out.println("远程调用...");
         List<User> list = new ArrayList<>();
@@ -39,5 +40,10 @@ public class AuthService {
         u2.setName(me + "2");
         list.add(u2);
         return list;
+    }
+
+    @CustomRedis(key = "void")
+    public void doSth() {
+
     }
 }
