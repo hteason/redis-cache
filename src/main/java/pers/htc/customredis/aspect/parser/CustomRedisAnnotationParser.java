@@ -1,4 +1,4 @@
-package pers.htc.customredis.aspect;
+package pers.htc.customredis.aspect.parser;
 
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -13,16 +13,20 @@ import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.stereotype.Component;
 import pers.htc.customredis.annotation.CustomRedis;
-import pers.htc.customredis.annotation.RedisKeyParam;
-import pers.htc.customredis.model.CustomRedisModel;
+import pers.htc.customredis.aspect.model.CustomRedisModel;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * 解析注解数据
+ *
+ * @author huangtingcheng
+ * @since 2020-08-24
+ **/
 @Component
 @Slf4j
-public class CustomRedisParser {
+public class CustomRedisAnnotationParser {
 
     private final ExpressionParser parser = new SpelExpressionParser();
     private final LocalVariableTableParameterNameDiscoverer discoverer = new LocalVariableTableParameterNameDiscoverer();
@@ -66,7 +70,7 @@ public class CustomRedisParser {
         Method method = ((MethodSignature) pjp.getSignature()).getMethod();
         String[] params = discoverer.getParameterNames(method);
         if (params == null || params.length == 0) {
-            log.warn("缓存层没有入参,默认使用key的字符串形式:" + defaultKey);
+            log.warn("缓存层没有入参,默认使用key的字符串形式 => " + defaultKey);
             return defaultKey;
         }
         Object[] arguments = pjp.getArgs();
@@ -81,33 +85,6 @@ public class CustomRedisParser {
         } catch (Exception e) {
             return defaultKey;
         }
-    }
-
-    private void resolveArgs(ProceedingJoinPoint pjp, CustomRedisModel customRedisModel) {
-        Object[] args = pjp.getArgs();
-        MethodSignature methodSignature = (MethodSignature) pjp.getSignature();
-        Annotation[][] parameterAnnotations = methodSignature.getMethod().getParameterAnnotations();
-        if (parameterAnnotations.length == 0) {
-            return;
-        }
-
-        String key = customRedisModel.getKey();
-        for (int i = 0; i < parameterAnnotations.length; i++) {
-            Annotation[] parameterAnnotation = parameterAnnotations[i];
-            for (Annotation annotation : parameterAnnotation) {
-                if (annotation instanceof RedisKeyParam) {
-                    RedisKeyParam redisKeyParam = (RedisKeyParam) annotation;
-                    String keyItem = "#" + redisKeyParam.value();
-//                    if (Objects.equals(keyItem, "")) {
-                    //没有设置key名时，key默认为参数名
-                    String keyValue = String.valueOf(args[i]);
-                    System.out.println(keyValue);
-                    key = key.replaceAll(keyItem, keyValue);
-                    break;//只会有一个注解，立即退出
-                }
-            }
-        }
-        System.out.println("key -> " + key);
     }
 
 }

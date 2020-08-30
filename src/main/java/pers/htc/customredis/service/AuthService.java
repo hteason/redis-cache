@@ -13,7 +13,9 @@ public class AuthService {
 
     private final String PREFIX = "0test:menu:";
 
-    @CustomRedis(key = PREFIX + "{#name}:{#email}:{#u.name}", expireTme = 1, expireTimeUnit = TimeUnit.DAYS)
+    @CustomRedis(key = PREFIX + "{#name}:{#email}:{#u.name}",
+            expireTme = 1,
+            expireTimeUnit = TimeUnit.DAYS)
     public User getMenu(String name,
                         String email,
                         User u) {
@@ -21,10 +23,12 @@ public class AuthService {
         User user = new User();
         user.setName(name);
         user.setAge(17);
-        return u;
+        return user;
     }
 
-    @CustomRedis(key = "0test:{#me}", expireTme = 1, expireTimeUnit = TimeUnit.HOURS)
+    @CustomRedis(key = "0test:{#me}",
+            expireTme = 1, expireTimeUnit = TimeUnit.HOURS,
+            extendTime = 1,extendTimeUnit = TimeUnit.HOURS)
     public List<User> getList(String me) {
         System.out.println("远程调用...");
         List<User> list = new ArrayList<>();

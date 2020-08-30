@@ -5,8 +5,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import pers.htc.customredis.annotation.CustomRedis;
-import pers.htc.customredis.annotation.RedisKeyParam;
 import pers.htc.customredis.model.User;
 import pers.htc.customredis.service.AuthService;
 
